@@ -5,4 +5,4 @@ pymongo
 certifi
 
 
--e .
+##-e .
