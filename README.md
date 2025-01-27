@@ -1,1 +1,1 @@
-### This my laptop price project 
+### This is a laptop price Regression project 
