@@ -1,0 +1,24 @@
+type: object
+properties:
+  status:
+    type: string
+  ram:
+    type: integer
+  storage:
+    type: integer
+  storage_type:
+    type: string
+  screen:
+    type: number
+  touch:
+    type: string
+  final_price:
+    type: number
+required:
+  - status
+  - ram
+  - storage
+  - storage_type
+  - screen
+  - touch
+  - final_price
