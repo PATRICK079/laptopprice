@@ -19,3 +19,16 @@ class DataTransformationArtifact:
     transformed_object_file_path: str
     transformed_train_file_path: str
     transformed_test_file_path: str
+
+
+@dataclass
+class MetricArtifact:
+    root_mean_squared_error: float
+    r2_score: float
+    
+    
+@dataclass
+class ModelTrainerArtifact:
+    trained_model_file_path: str
+    train_metric_artifact: MetricArtifact
+    test_metric_artifact: MetricArtifact

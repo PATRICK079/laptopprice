@@ -7,7 +7,9 @@ certifi
 pymongo[srv]==3.6
 scikit-learn
 pyaml
-
-
+xgboost
+catboost
+mlflow
+dagshub
 
 ##-e .

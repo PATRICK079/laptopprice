@@ -1,9 +1,13 @@
 import yaml
 from src.exception.exception import LaptopPriceException
+from src.entity.artifact_entity import MetricArtifact, ModelTrainerArtifact
 from src.logging.logger import logging
 import os,sys
 import numpy as np
 import pickle
+from sklearn.metrics import r2_score, mean_squared_error
+from sklearn.model_selection import GridSearchCV
+from src.constant.training_pipeline import SAVED_MODEL_DIR,MODEL_FILE_NAME
 
 
 def read_yaml_file(file_path: str) -> dict:
@@ -70,3 +74,68 @@ def load_numpy_array_data(file_path: str) -> np.array:
     except Exception as e:
         raise LaptopPriceException(e, sys) from e
     
+def get_metric_score(y_true,y_pred)->MetricArtifact:
+    try:
+            
+    
+        model_rmse= np.sqrt(mean_squared_error(y_true, y_pred))
+        model_r2_score=r2_score(y_true, y_pred)
+
+        model_metric = MetricArtifact(
+                    root_mean_squared_error=model_rmse, 
+                    r2_score=model_r2_score)
+        return model_metric
+    
+    except Exception as e:
+        raise LaptopPriceException(e,sys)
+    
+
+class LaptopModel:
+    def __init__(self,preprocessor,model):
+        try:
+            self.preprocessor = preprocessor
+            self.model = model
+        except Exception as e:
+            raise LaptopPriceException(e,sys)
+    
+    def predict(self,x):
+        try:
+            x_transform = self.preprocessor.transform(x)
+            y_hat = self.model.predict(x_transform)
+            return y_hat
+        except Exception as e:
+            raise LaptopPriceException(e,sys)
+
+
+
+def evaluate_models(X_train, y_train,X_test,y_test,models,param):
+    try:
+        report = {}
+
+        for i in range(len(list(models))):
+            model = list(models.values())[i]
+            para=param[list(models.keys())[i]]
+
+            gs = GridSearchCV(model,para,cv=3)
+            gs.fit(X_train,y_train)
+
+            model.set_params(**gs.best_params_)
+            model.fit(X_train,y_train)
+
+            #model.fit(X_train, y_train)  # Train model
+
+            y_train_pred = model.predict(X_train)
+
+            y_test_pred = model.predict(X_test)
+
+            train_model_score = r2_score(y_train, y_train_pred)
+
+            test_model_score = r2_score(y_test, y_test_pred)
+
+            report[list(models.keys())[i]] = test_model_score
+
+        return report
+
+    except Exception as e:
+        raise LaptopPriceException(e, sys)
+
