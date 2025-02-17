@@ -62,3 +62,7 @@ Model Trainer ralated constant start with MODE TRAINER VAR NAME
 MODEL_TRAINER_DIR_NAME: str = "model_trainer"
 MODEL_TRAINER_TRAINED_MODEL_DIR: str = "trained_model"
 MODEL_TRAINER_TRAINED_MODEL_NAME: str = "model.pkl"
+
+
+
+TRAINING_BUCKET_NAME = "patricklaptopprice"

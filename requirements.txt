@@ -11,5 +11,8 @@ xgboost
 catboost
 mlflow
 dagshub
+fastapi
+uvicorn
+python-multipart
 
-##-e .
+##-e .pip

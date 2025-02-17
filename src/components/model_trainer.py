@@ -21,14 +21,10 @@ from xgboost import XGBRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 
 import mlflow
-#from urllib.parse import urlparse
 
 import dagshub
 dagshub.init(repo_owner='PATRICK079', repo_name='laptopprice', mlflow=True)
 
-#os.environ["MLFLOW_TRACKING_URI"]="https://dagshub.com/krishnaik06/networksecurity.mlflow"
-#os.environ["MLFLOW_TRACKING_USERNAME"]="krishnaik06"
-#os.environ["MLFLOW_TRACKING_PASSWORD"]="7104284f1bb44ece21e0e2adb4e36a250ae3251f"
 
 class ModelTrainer:
     def __init__(self,model_trainer_config:ModelTrainerConfig,data_transformation_artifact:DataTransformationArtifact):
@@ -40,28 +36,15 @@ class ModelTrainer:
         
            
     def track_mlflow(self,best_model,classificationmetric):
-        #mlflow.set_registry_uri("https://dagshub.com/krishnaik06/networksecurity.mlflow")
-        #tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
-        with mlflow.start_run():
+       with mlflow.start_run():
               root_mean_squared_error =classificationmetric.root_mean_squared_error
               r2_score=classificationmetric.r2_score
 
 
-        mlflow.log_metric("root_mean_squared_error",root_mean_squared_error)
-        mlflow.log_metric("r2_score",  r2_score)
-        mlflow.sklearn.log_model(best_model,"model")
-            # Model registry does not work with file store
-        #if tracking_url_type_store != "file":
-
-                # Register the model
-                # There are other ways to use the Model Registry, which depends on the use case,
-                # please refer to the doc for more information:
-                # https://mlflow.org/docs/latest/model-registry.html#api-workflow
-              #  mlflow.sklearn.log_model(best_model, "model", registered_model_name=best_model)
-        #else:
-            #    mlflow.sklearn.log_model(best_model, "model")
+              mlflow.log_metric("root_mean_squared_error",root_mean_squared_error)
+              mlflow.log_metric("r2_score",  r2_score)
+              mlflow.sklearn.log_model(best_model,"model")
         
-
 
     def train_model(self,X_train,y_train,x_test,y_test):
         models = {
@@ -138,7 +121,11 @@ class ModelTrainer:
         best_model_name = list(model_report.keys())[
             list(model_report.values()).index(best_model_score)
         ]
+        logging.info(f"The best model is: {best_model_name}")
+        print(f"The best model is: {best_model_name}")
+        
         best_model = models[best_model_name]
+
         y_train_pred=best_model.predict(X_train)
 
         train_metric=get_metric_score(y_true = y_train,y_pred=y_train_pred)
@@ -152,7 +139,7 @@ class ModelTrainer:
 
         test_metric=get_metric_score(y_true=y_test,y_pred=y_test_pred)
 
-       # tra
+       
         self.track_mlflow(best_model,test_metric)
 
         preprocessor = load_object(file_path=self.data_transformation_artifact.transformed_object_file_path)
@@ -163,7 +150,7 @@ class ModelTrainer:
         Laptop_Model=LaptopModel(preprocessor=preprocessor,model=best_model)
         save_object(self.model_trainer_config.trained_model_file_path,obj=LaptopModel)
 
-        save_object("final_model/model.pkl",best_model)
+        save_object("final_model/laptop_model.pkl",best_model)
         
 
         ## Model Trainer Artifact
