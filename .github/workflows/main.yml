@@ -1,4 +1,4 @@
-xname: CI/CD Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
@@ -38,7 +38,4 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Deploy to Server (Example: AWS, Heroku, etc.)
-        run: |
-          echo "Deploying the model..."
-          # Add your deployment commands here
+    
