@@ -14,5 +14,6 @@ dagshub
 fastapi
 uvicorn
 python-multipart
+pytest
 
 ##-e .pip
