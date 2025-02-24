@@ -4,7 +4,7 @@ pandas
 pymongo==4.10.1
 scikit-learn
 certifi
-pymongo[srv]==3.6
+#pymongo[srv]==3.6
 scikit-learn
 pyaml
 xgboost
@@ -14,5 +14,6 @@ dagshub
 fastapi
 uvicorn
 python-multipart
+pytest
 
 ##-e .pip
