@@ -24,7 +24,7 @@ jobs:
 
       - name: Run unit tests
         run: echo "Running unit tests"
-        
+
   build-and-push-ecr-image:
     name: Continuous Delivery
     needs: build
@@ -38,7 +38,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y jq unzip
-          
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -49,9 +49,27 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-      
+
+      - name: Check if Docker image already exists in ECR
+        id: check-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY_NAME }}
+          IMAGE_TAG: latest
+        run: |
+          echo "Checking if image exists in ECR..."
+          IMAGE_EXISTS=$(aws ecr describe-images --repository-name $ECR_REPOSITORY --image-ids imageTag=$IMAGE_TAG --query 'imageDetails' --output text || echo "not found")
+          
+          if [ "$IMAGE_EXISTS" != "not found" ]; then
+            echo "Image already exists in ECR. Skipping build and push."
+            echo "skip_push=true" >> $GITHUB_ENV
+          else
+            echo "Image does not exist. Proceeding with build and push."
+            echo "skip_push=false" >> $GITHUB_ENV
+          fi
+
       - name: Build, tag, and push image to Amazon ECR
-        id: build-image
+        if: env.skip_push == 'false'
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY_NAME }}
@@ -72,3 +90,49 @@ jobs:
           # Push the image to ECR
           echo "Pushing Docker image to ECR..."
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+  deploy:
+    name: Continuous Deployment
+    needs: build-and-push-ecr-image
+    runs-on: self-hosted  
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Pull latest image from ECR
+        env:
+          ECR_REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
+          ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY_NAME }}
+          IMAGE_TAG: latest
+        run: |
+          echo "Pulling latest Docker image from ECR..."
+          docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Stop and remove old container
+        run: |
+          echo "Stopping and removing old container..."
+          docker stop my_app || true
+          docker rm my_app || true
+
+      - name: Run new container
+        env:
+          ECR_REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
+          ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY_NAME }}
+          IMAGE_TAG: latest
+        run: |
+          echo "Running new container..."
+          docker run -d --name my_app -p 80:80 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Verify Deployment
+        run: |
+          echo "Verifying that the application is running..."
+          sleep 10
+          curl -I http://localhost || exit 1
