@@ -107,32 +107,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Pull latest image from ECR
-        env:
-          ECR_REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
-          ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY_NAME }}
-          IMAGE_TAG: latest
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses:  aws-actions/amazon-ecr-login@v1
+         
+      - name: pull latest images
         run: |
-          echo "Pulling latest Docker image from ECR..."
-          docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker pull ${{secrets.AWS_ECR_LOGIN_URL}}/${{ secrets.AWS_ECR_REPOSITORY_NAME }}:latest
+        
 
-      - name: Stop and remove old container
+      - name: Run Docker Image to serve users 
         run: |
-          echo "Stopping and removing old container..."
-          docker stop my_app || true
-          docker rm my_app || true
+          docker run -d  -p 8080:8080 --ipc="host" --name=laptopprice 'aws-access-key-id = ${{ secrets.AWS_ACCESS_KEY }}' -e 'aws-region = ${{ secrets.AWS_REGION }}' ${{secrets.AWS_ECR_LOGIN_URL}}/${{ secrets.AWS_ECR_REPOSITORY_NAME }}:latest
 
-      - name: Run new container
-        env:
-          ECR_REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
-          ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY_NAME }}
-          IMAGE_TAG: latest
+      - name: Clean previous images and containers
         run: |
-          echo "Running new container..."
-          docker run -d --name my_app -p 80:80 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-      - name: Verify Deployment
-        run: |
-          echo "Verifying that the application is running..."
-          sleep 10
-          curl -I http://localhost || exit 1
+          docker system prune -f
