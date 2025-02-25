@@ -23,6 +23,8 @@ from sklearn.metrics import mean_squared_error, r2_score
 import mlflow
 
 import dagshub
+dagshub_token = os.getenv("DAGSHUB_TOKEN")
+
 dagshub.init(repo_owner='PATRICK079', repo_name='laptopprice', mlflow=True)
 
 
