@@ -16,4 +16,4 @@ uvicorn
 python-multipart
 pytest
 
-##-e .pip
+##-e .
