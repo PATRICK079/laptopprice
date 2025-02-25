@@ -120,6 +120,7 @@ jobs:
         run: |
           docker run -d -p 8080:8080 --ipc="host" --name=laptopprice \
           -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }} \
+          -e MONGODB_URL_KEY=${{ secrets.MONGO_DB_URL }} \
           -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
           -e AWS_REGION=${{ secrets.AWS_REGION }} \
           -e DAGSHUB_TOKEN=${{ secrets.DAGSHUB_TOKEN }} \
