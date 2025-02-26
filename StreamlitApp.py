@@ -75,7 +75,7 @@ input_df = pd.DataFrame({
     "storage": [storage],
     "storage_type": [storage_type],
     "screen": [screen],
-    "touch": [touch]
+    "touch": [int(touch)]
 })
 
 if st.button("Predict"):
