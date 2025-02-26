@@ -32,7 +32,7 @@ model = joblib.load(local_file)
 st.markdown("## Welcome to Laptop Prediction App")
 st.image("Screenshot 2025-02-26 at 16.49.04.png", caption="Laptop Price Prediction")
 st.sidebar.markdown("## About App")
-st.sidebar.markdown("""This web application leverages machine learning to predict the price of a laptop based on several user-defined features. It uses an XGBoost regresssor to generate the predicted price based on the input data.
+st.sidebar.markdown("""This web application leverages machine learning to predict the price of a laptop based on several user-defined features. It uses an XGBoost regressor to generate the predicted price based on the input data.
 
 Features in the Application:
 
