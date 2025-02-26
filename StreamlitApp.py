@@ -16,11 +16,9 @@ def download_from_s3(bucket_name, object_name, local_file):
     try:
         with st.spinner(f"Downloading {local_file} from S3... This may take a while."):
             s3.download_file(bucket_name, object_name, local_file)
-            #st.success(f" model downloaded successfully!")
     except Exception as e:
         st.error(f"Error downloading {local_file}: {e}")
 
-# S3 bucket details for the model and preprocessor
 bucket_name = "laptopmodel"  
 object_name = "final_laptop_model.pk1"  
 local_file = "final_laptop_model.pk1"  
@@ -29,10 +27,7 @@ local_file = "final_laptop_model.pk1"
 # Download model and preprocessor from S3 if not already downloaded
 download_from_s3(bucket_name, object_name, local_file)
 
-# Load the trained CatBoost model and preprocessor
 model = joblib.load(local_file)
-# Load the trained model
-#model = joblib.load("/Users/sot/StreamlitTutorial/final_laptop_model.pk1")
 
 st.markdown("## Welcome to Laptop Prediction App")
 st.image("Screenshot 2025-02-26 at 16.49.04.png", caption="Laptop Price Prediction")
@@ -78,7 +73,6 @@ input_df = pd.DataFrame({
 
 if st.button("Predict"):
         try:
-            # Convert categorical variables to dummy variables
             dummies_input = pd.get_dummies(input_df, drop_first=True)
 
             # Ensure input features match the trained model
