@@ -123,7 +123,6 @@ jobs:
           -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
           -e AWS_REGION=${{ secrets.AWS_REGION }} \
           -e DAGSHUB_TOKEN=${{ secrets.DAGSHUB_TOKEN }} \
-          -e MONGO_DB_URL=${{ secrets.MONGO_DB_URL }} \
           448049829963.dkr.ecr.us-east-1.amazonaws.com/laptopprice:latest
 
       - name: Clean previous images and containers
