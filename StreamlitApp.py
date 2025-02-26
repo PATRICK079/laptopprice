@@ -26,10 +26,10 @@ local_file = "laptop_model.pkl"
 
 
 # Download model and preprocessor from S3 if not already downloaded
-download_from_s3(bucket_name, model_object_name, model_local_file)
+download_from_s3(bucket_name, object_name, local_file)
 
 # Load the trained CatBoost model and preprocessor
-model = joblib.load(model_local_file)
+model = joblib.load(local_file)
 # Load the trained model
 #model = joblib.load("/Users/sot/StreamlitTutorial/final_laptop_model.pk1")
 
