@@ -17,4 +17,4 @@ python-multipart
 pytest
 boto3
 
-##-e .
+-e .
