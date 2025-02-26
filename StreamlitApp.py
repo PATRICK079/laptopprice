@@ -20,19 +20,16 @@ def download_from_s3(bucket_name, object_name, local_file):
         st.success(f"{local_file} already exists locally, loading it...")
 
 # S3 bucket details for model and preprocessor
-bucket_name = "patricklaptopprice"
-model_object_name = "final_model/02_17_2025_13_16_38/laptop_model.pkl"
-preprocessor_object_name = "final_model/02_17_2025_13_16_38/data_preprocessor.pkl"
-model_local_file = "laptop_model.pkl"
-preprocessor_local_file = "data_preprocessor.pkl"
+bucket_name = "laptopmodel"  
+object_name = "final_laptop_model.pk1"  
+local_file = "laptop_model.pkl"  
+
 
 # Download model and preprocessor from S3 if not already downloaded
 download_from_s3(bucket_name, model_object_name, model_local_file)
-download_from_s3(bucket_name, preprocessor_object_name, preprocessor_local_file)
 
 # Load the trained CatBoost model and preprocessor
 model = joblib.load(model_local_file)
-preprocessor = joblib.load(preprocessor_local_file)
 # Load the trained model
 #model = joblib.load("/Users/sot/StreamlitTutorial/final_laptop_model.pk1")
 
@@ -75,21 +72,28 @@ input_df = pd.DataFrame({
     "storage": [storage],
     "storage_type": [storage_type],
     "screen": [screen],
-    "touch": [int(touch)]
+    "touch": [touch]
 })
 
 if st.button("Predict"):
         try:
-            # Preprocess the input data using the preprocessor
-            processed_input = preprocessor.transform(input_df)
+            # Convert categorical variables to dummy variables
+            dummies_input = pd.get_dummies(input_df, drop_first=True)
 
-            # Make prediction using the model
-            prediction = model.predict(processed_input)
+            # Ensure input features match the trained model
+            missing_cols = set(model.feature_names_in_) - set(dummies_input.columns)
+            for col in missing_cols:
+                dummies_input[col] = 0  
+            # Ensure correct column order
+            dummies_input = dummies_input[model.feature_names_in_]
 
-            # Display the result
+            # Make prediction
+            prediction = model.predict(dummies_input)
+
+            # Display result
             st.success(f"Predicted Laptop Price: ${prediction.item():,.2f}")
 
         except Exception as e:
             st.error(f"Error: {e}")
 else:
-    st.error("Model or preprocessor failed to load.")
+    st.error("Model failed to load.")
