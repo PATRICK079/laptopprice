@@ -21,7 +21,7 @@ def download_from_s3(bucket_name, object_name, local_file):
 
 # S3 bucket details for model and preprocessor
 bucket_name = "laptopmodel"  
-object_name = "laptopmodel/final_laptop_model.pk1"  
+object_name = "final_laptop_model.pk1"  
 local_file = "final_laptop_model.pkl"  
 
 
