@@ -5,8 +5,7 @@ import boto3
 import os
 import joblib
 
-# Function to download the model from S3
-def download_model_from_s3(bucket_name, object_name, local_file):
+def download_from_s3(bucket_name, object_name, local_file):
     s3 = boto3.client(
         's3',
         aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
@@ -14,22 +13,26 @@ def download_model_from_s3(bucket_name, object_name, local_file):
     )
     
     if not os.path.exists(local_file):  # Check if the file already exists locally
-        with st.spinner("Downloading model... This may take a while."):
+        with st.spinner("Downloading file... This may take a while."):
             s3.download_file(bucket_name, object_name, local_file)
-            st.success("Model downloaded successfully!")
+            st.success(f"{local_file} downloaded successfully!")
     else:
-        st.success("Model already exists locally, loading it...")
+        st.success(f"{local_file} already exists locally, loading it...")
 
-# S3 bucket details
+# S3 bucket details for model and preprocessor
 bucket_name = "patricklaptopprice"
-object_name = "final_model/02_17_2025_13_16_38/laptop_model.pkl"
-local_file = "laptop_model.pkl"  # Local path to save the model
+model_object_name = "final_model/02_17_2025_13_16_38/laptop_model.pkl"
+preprocessor_object_name = "final_model/02_17_2025_13_16_38/data_preprocessor.pkl"
+model_local_file = "laptop_model.pkl"
+preprocessor_local_file = "data_preprocessor.pkl"
 
-# Download the model from S3 if it does not exist locally
-download_model_from_s3(bucket_name, object_name, local_file)
+# Download model and preprocessor from S3 if not already downloaded
+download_from_s3(bucket_name, model_object_name, model_local_file)
+download_from_s3(bucket_name, preprocessor_object_name, preprocessor_local_file)
 
-# Load the trained model from the local file
-model = joblib.load(local_file)
+# Load the trained CatBoost model and preprocessor
+model = joblib.load(model_local_file)
+preprocessor = joblib.load(preprocessor_local_file)
 # Load the trained model
 #model = joblib.load("/Users/sot/StreamlitTutorial/final_laptop_model.pk1")
 
@@ -76,22 +79,17 @@ input_df = pd.DataFrame({
 })
 
 if st.button("Predict"):
-    try:
-        # Convert categorical variables to dummy variables
-        dummies_input = pd.get_dummies(input_df, drop_first=True)
+        try:
+            # Preprocess the input data using the preprocessor
+            processed_input = preprocessor.transform(input_df)
 
-        # Ensure input features match the trained model
-        missing_cols = set(model.feature_names_in_) - set(dummies_input.columns)
-        for col in missing_cols:
-         dummies_input[col] = 0  
-        # Ensure correct column order
-        dummies_input = dummies_input[model.feature_names_in_]
+            # Make prediction using the model
+            prediction = model.predict(processed_input)
 
-        # Make prediction
-        prediction = model.predict(dummies_input)
+            # Display the result
+            st.success(f"Predicted Laptop Price: ${prediction.item():,.2f}")
 
-        # Display result
-        st.success(f"Predicted Laptop Price: ${prediction.item():,.2f}")
-
-    except Exception as e:
-        st.error(f"Error: {e}")
+        except Exception as e:
+            st.error(f"Error: {e}")
+else:
+    st.error("Model or preprocessor failed to load.")
