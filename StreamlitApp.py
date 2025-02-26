@@ -1,10 +1,37 @@
 import streamlit as st 
 import numpy as np 
 import pandas as pd
+import boto3
+import os
 import joblib
 
+# Function to download the model from S3
+def download_model_from_s3(bucket_name, object_name, local_file):
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+    )
+    
+    if not os.path.exists(local_file):  # Check if the file already exists locally
+        with st.spinner("Downloading model... This may take a while."):
+            s3.download_file(bucket_name, object_name, local_file)
+            st.success("Model downloaded successfully!")
+    else:
+        st.success("Model already exists locally, loading it...")
+
+# S3 bucket details
+bucket_name = "patricklaptopprice"
+object_name = "final_model/02_17_2025_13_16_38/laptop_model.pkl"
+local_file = "laptop_model.pkl"  # Local path to save the model
+
+# Download the model from S3 if it does not exist locally
+download_model_from_s3(bucket_name, object_name, local_file)
+
+# Load the trained model from the local file
+model = joblib.load(local_file)
 # Load the trained model
-model = joblib.load("/Users/sot/StreamlitTutorial/final_laptop_model.pk1")
+#model = joblib.load("/Users/sot/StreamlitTutorial/final_laptop_model.pk1")
 
 st.markdown("## Welcome to Laptop Prediction App")
 st.image("Screenshot 2025-02-26 at 16.49.04.png", caption="Laptop Price Prediction")
