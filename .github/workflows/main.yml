@@ -124,7 +124,7 @@ jobs:
           -e AWS_REGION=${{ secrets.AWS_REGION }} \
           -e DAGSHUB_TOKEN=${{ secrets.DAGSHUB_TOKEN }} \
           -e MONGO_DB_URL=${{ secrets.MONGO_DB_URL }} \
-          ${{ secrets.AWS_ECR_LOGIN_URI }}/${{ secrets.AWS_ECR_REPOSITORY_NAME }}:latest
+          448049829963.dkr.ecr.us-east-1.amazonaws.com/laptopprice:latest
 
       - name: Clean previous images and containers
         run: |
