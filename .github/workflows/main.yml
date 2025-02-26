@@ -124,10 +124,6 @@ jobs:
           -e AWS_REGION=${{ secrets.AWS_REGION }} \
           -e DAGSHUB_TOKEN=${{ secrets.DAGSHUB_TOKEN }} \
           ${{ secrets.AWS_ECR_LOGIN_URI }}/${{ secrets.AWS_ECR_REPOSITORY_NAME }}:latest
-<<<<<<< HEAD
-=======
-          
->>>>>>> refs/remotes/origin/main
 
       - name: Clean previous images and containers
         run: |
