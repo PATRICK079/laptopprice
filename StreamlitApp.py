@@ -16,7 +16,7 @@ def download_from_s3(bucket_name, object_name, local_file):
     try:
         with st.spinner(f"Downloading {local_file} from S3... This may take a while."):
             s3.download_file(bucket_name, object_name, local_file)
-            st.success(f"{local_file} downloaded successfully!")
+            st.success(f" model downloaded successfully!")
     except Exception as e:
         st.error(f"Error downloading {local_file}: {e}")
 
