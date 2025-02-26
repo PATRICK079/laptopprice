@@ -12,17 +12,18 @@ def download_from_s3(bucket_name, object_name, local_file):
         aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
     )
     
-   # if not os.path.exists(local_file):  # Check if the file already exists locally
-        #with st.spinner("Downloading file... This may take a while."):
-     s3.download_file(bucket_name, object_name, local_file)
-     st.success(f"{local_file} downloaded successfully!")
-    #else:
-        #st.success(f"{local_file} already exists locally, loading it...")
+    # Download the file from S3 to the local file
+    try:
+        with st.spinner(f"Downloading {local_file} from S3... This may take a while."):
+            s3.download_file(bucket_name, object_name, local_file)
+            st.success(f"{local_file} downloaded successfully!")
+    except Exception as e:
+        st.error(f"Error downloading {local_file}: {e}")
 
-# S3 bucket details for model and preprocessor
+# S3 bucket details for the model and preprocessor
 bucket_name = "laptopmodel"  
 object_name = "final_laptop_model.pk1"  
-local_file = "final_laptop_model.pkl"  
+local_file = "final_laptop_model.pk1"  
 
 
 # Download model and preprocessor from S3 if not already downloaded
