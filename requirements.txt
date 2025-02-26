@@ -15,5 +15,6 @@ fastapi
 uvicorn
 python-multipart
 pytest
+boto3
 
 ##-e .
