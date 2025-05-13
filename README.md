@@ -57,19 +57,19 @@ To build a regression model that accurately estimates the price of a laptop base
 
 # 🔍 How to Use
  1. Clone the repo:
+   ```bash
+    git clone https://github.com/PATRICK079/laptopprice.git
 
-    `git clone https://github.com/PATRICK079/laptopprice.git`
-
-     `cd laptopprice`
-
+     cd laptopprice
+ ```
 2. Install dependencies:
-
-    `pip install -r requirements.txt`
-
+```bash
+    pip install -r requirements.txt
+```
 3. Run Streamlit App:
-   
-   `streamlit run app.py`
-
+ ```bash
+   streamlit run app.py
+```
 # 🎥 Demo Walkthroughs (All Project Phases)
 
 Each phase of this project has been documented on LinkedIn. You can view each one of them.
@@ -87,6 +87,7 @@ Each phase of this project has been documented on LinkedIn. You can view each on
 # 🌐 Demo Links
 
 **📦 Batch Predictions:** [Try It Here](https://lnkd.in/dp2VdMh5)
+
 
 **⚡ Single Prediction Web App:** [Try It Here](https://lnkd.in/dusVUCtm)
 
