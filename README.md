@@ -4,11 +4,13 @@ This project represents a complete end-to-end machine learning lifecycle for a r
 
 
 # 🚀 Project Goal
+
 To build a regression model that accurately estimates the price of a laptop based on structured features. This tool can be used by e-commerce platforms, retailers, or consumers for price analysis and recommendation.
 
 # 🔄 Lifecycle Breakdown
 
 **✅ Phase 1: Data Pipeline & ETL Setup**
+
 • Designed a clean project structure with modular scripts and Git-based version control.
 
 • Connected to MongoDB Atlas for storing raw and processed datasets.
@@ -16,6 +18,7 @@ To build a regression model that accurately estimates the price of a laptop base
 • Built an ETL pipeline to extract, transform, and load laptop data into a cloud database.
 
 **✅ Phase 2:** Data Ingestion & Preprocessing
+
 • Created an ingestion pipeline to handle batch data input.
 
 • Applied standard data cleaning techniques.
@@ -31,6 +34,7 @@ To build a regression model that accurately estimates the price of a laptop base
 • Stored transformed datasets as NumPy arrays for efficient downstream usage.
 
 **✅ Phase 5: Model Training & Evaluation**
+
 • Compared multiple regression algorithms: Linear Regression, Random Forest, XGBoost, CatBoost.
 
 • Performed hyperparameter tuning, evaluated using RMSE and R² Score.
@@ -40,6 +44,7 @@ To build a regression model that accurately estimates the price of a laptop base
 • Saved the final model and transformer as .pkl files for future use.
 
 **✅ Phase 6: Batch Prediction, CI/CD & API Deployment**
+
 • Designed a structured, automated model training pipeline.
 
 • Set up CI/CD pipelines with GitHub Actions for continuous integration.
